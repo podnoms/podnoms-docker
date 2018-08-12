@@ -1,0 +1,45 @@
+version: '3'
+services:
+    web:
+        image: podnoms.azurecr.io/podnoms.web
+        restart: always
+        labels:
+            com.centurylinklabs.watchtower.enable: "true"
+        container_name: podnoms.web
+        ports:
+            - "80:80"
+            - "443:443"
+        links:
+            - "api:api"
+        volumes:
+            - /etc/letsencrypt:/etc/letsencrypt
+            - /var/lib/letsencrypt:/var/lib/letsencrypt
+    api:
+        image: podnoms.azurecr.io/podnoms.api
+        restart: always
+        labels:
+            com.centurylinklabs.watchtower.enable: "true"
+        container_name: podnoms.api
+        expose:
+            - 5000
+    orchestra:
+        image: portainer/portainer
+        restart: always
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - /opt/containers/portainer/data:/data
+        expose:
+            - 9000
+    watchtower:
+        image: v2tec/watchtower
+        container_name: podnoms.watcher
+        restart: always
+        environment:
+            - REPO_USER=${REPO_USER}
+            - REPO_PASS=${REPO_PASS}
+            - WATCHTOWER_NOTIFICATIONS=${WATCHTOWER_NOTIFICATIONS}
+            - WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL=${WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL}
+            - WATCHTOWER_NOTIFICATION_SLACK_IDENTIFIER=${WATCHTOWER_NOTIFICATION_SLACK_IDENTIFIER}
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        command: --interval 30 --label-enable
