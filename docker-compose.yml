@@ -56,12 +56,12 @@ services:
                 max-size: ${NGINX_LETSENCRYPT_LOG_MAX_SIZE:-2m}
                 max-file: ${NGINX_LETSENCRYPT_LOG_MAX_FILE:-10}
     
-    api:
-        image: podnoms.azurecr.io/podnoms.api
-        environment:
-            VIRTUAL_HOST: api.podnoms.com
-            LETSENCRYPT_HOST: api.podnoms.com
-            LETSENCRYPT_EMAIL: fergal.moran@gmail.com
+    # api:
+    #     image: podnoms.azurecr.io/podnoms.api
+    #     environment:
+    #         VIRTUAL_HOST: api.podnoms.com
+    #         LETSENCRYPT_HOST: api.podnoms.com
+    #         LETSENCRYPT_EMAIL: fergal.moran@gmail.com
 
 networks:
     default:
