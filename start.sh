@@ -22,7 +22,9 @@ if [ ! -z ${SERVICE_NETWORK+X} ]; then
 fi
 
 # 4. Download the latest version of nginx.tmpl
-curl https://raw.githubusercontent.com/jwilder/nginx-proxy/master/nginx.tmpl > nginx.tmpl
+curl https://raw.githubusercontent.com/jwilder/nginx-proxy/master/nginx.tmpl > templates/nginx.tmpl
+# cp templates/nginx.tmpl /opt/containers/nginx/templates/
+scp templates/nginx.tmpl podnoms.com:/opt/containers/nginx/templates/
 
 # 5. Update local images
 docker-compose pull
@@ -60,7 +62,7 @@ fi
 
 # Check if you have multiple network
 if [ -z ${SERVICE_NETWORK+X} ]; then
-    docker-compose up -d
+    docker-compose up
 else
     docker-compose -f docker-compose-multiple-networks.yml up -d
 fi

@@ -14,7 +14,7 @@ source .env
 
 # Testing your proxy
 if [ -z ${SERVICE_NETWORK+X} ]; then
-    docker run -d -e VIRTUAL_HOST=$DOMAIN --network=$NETWORK --name test-web httpd:alpine
+    docker run -e VIRTUAL_HOST=$DOMAIN --network=$NETWORK httpd:alpine
 else
     docker run -d -e VIRTUAL_HOST=$DOMAIN --network=$SERVICE_NETWORK --name test-web httpd:alpine
 fi
