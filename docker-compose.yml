@@ -18,6 +18,7 @@ services:
       LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
   orchestra:
     image: portainer/portainer
+    container_name: ${ORCHESTRATOR_CONTAINER_NAME:-orchestra}
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
