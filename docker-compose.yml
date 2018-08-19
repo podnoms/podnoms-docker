@@ -1,18 +1,41 @@
-version: '2'
+version: '3'
 services:
-  nginx:
-      # restart: "always"
-    build: ./nginx/
-    ports:
-        - "80:80"
-        - "443:443"
-    links:
-        - "api:api"
-    volumes:
-        - /etc/letsencrypt:/etc/letsencrypt
-        - /var/lib/letsencrypt:/var/lib/letsencrypt
   api:
-    image: fergalmoran/podnoms.api
-    container_name: api
-    expose:
-        - 5000
+    image: podnoms.azurecr.io/podnoms.api
+    container_name: ${API_CONTAINER_NAME:-api}
+    restart: always
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+    environment:
+      VIRTUAL_HOST: ${API_DOMAINS}
+      LETSENCRYPT_HOST: ${API_DOMAINS}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
+      ASPNETCORE_URLS: http://0.0.0.0:80
+  web:
+    image: podnoms.azurecr.io/podnoms.web
+    container_name: ${WEB_CONTAINER_NAME:-web}
+    restart: always
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+    environment:
+      VIRTUAL_HOST: ${WEB_DOMAINS}
+      LETSENCRYPT_HOST: ${WEB_DOMAINS}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
+  orchestra:
+    image: portainer/portainer
+    container_name: ${ORCHESTRATOR_CONTAINER_NAME:-orchestra}
+    restart: always
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/containers/portainer/data:/data
+    environment:
+      VIRTUAL_HOST: ${ORCHESTRATOR_DOMAINS}
+      LETSENCRYPT_HOST: ${ORCHESTRATOR_DOMAINS}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
+
+networks:
+  default:
+    external:
+      name: ${NETWORK:-webproxy}
