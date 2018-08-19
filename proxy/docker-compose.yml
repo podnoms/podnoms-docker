@@ -56,7 +56,19 @@ services:
       options:
         max-size: ${NGINX_LETSENCRYPT_LOG_MAX_SIZE:-2m}
         max-file: ${NGINX_LETSENCRYPT_LOG_MAX_FILE:-10}
-
+  watchtower:
+    image: v2tec/watchtower
+    container_name: podnoms.watcher
+    restart: always
+    environment:
+      - REPO_USER=${REPO_USER}
+      - REPO_PASS=${REPO_PASS}
+      - WATCHTOWER_NOTIFICATIONS=${WATCHTOWER_NOTIFICATIONS}
+      - WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL=${WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL}
+      - WATCHTOWER_NOTIFICATION_SLACK_IDENTIFIER=${WATCHTOWER_NOTIFICATION_SLACK_IDENTIFIER}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 30 --label-enable
 networks:
   default:
     external:

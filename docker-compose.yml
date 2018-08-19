@@ -3,6 +3,9 @@ services:
   api:
     image: podnoms.azurecr.io/podnoms.api
     container_name: ${API_CONTAINER_NAME:-api}
+    restart: always
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
     environment:
       VIRTUAL_HOST: ${API_DOMAINS}
       LETSENCRYPT_HOST: ${API_DOMAINS}
@@ -12,6 +15,8 @@ services:
     image: podnoms.azurecr.io/podnoms.web
     container_name: ${WEB_CONTAINER_NAME:-web}
     restart: always
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
     environment:
       VIRTUAL_HOST: ${WEB_DOMAINS}
       LETSENCRYPT_HOST: ${WEB_DOMAINS}
@@ -20,6 +25,8 @@ services:
     image: portainer/portainer
     container_name: ${ORCHESTRATOR_CONTAINER_NAME:-orchestra}
     restart: always
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /opt/containers/portainer/data:/data
@@ -27,19 +34,6 @@ services:
       VIRTUAL_HOST: ${ORCHESTRATOR_DOMAINS}
       LETSENCRYPT_HOST: ${ORCHESTRATOR_DOMAINS}
       LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
-  # watchtower:
-  #   image: v2tec/watchtower
-  #   container_name: podnoms.watcher
-  #       restart: always
-  #       environment:
-  #           - REPO_USER=${REPO_USER}
-  #           - REPO_PASS=${REPO_PASS}
-  #           - WATCHTOWER_NOTIFICATIONS=${WATCHTOWER_NOTIFICATIONS}
-  #           - WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL=${WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL}
-  #           - WATCHTOWER_NOTIFICATION_SLACK_IDENTIFIER=${WATCHTOWER_NOTIFICATION_SLACK_IDENTIFIER}
-  #       volumes:
-  #           - /var/run/docker.sock:/var/run/docker.sock
-  #       command: --interval 30 --label-enable
 
 networks:
   default:
