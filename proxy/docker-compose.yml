@@ -58,7 +58,7 @@ services:
         max-file: ${NGINX_LETSENCRYPT_LOG_MAX_FILE:-10}
   watchtower:
     image: v2tec/watchtower
-    container_name: podnoms.watcher
+    container_name: podnoms-watcher
     restart: always
     environment:
       - REPO_USER=${REPO_USER}
@@ -69,6 +69,17 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --interval 30 --label-enable
+  orchestra:
+    image: portainer/portainer
+    container_name: ${ORCHESTRATOR_CONTAINER_NAME:-orchestra}
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/containers/portainer/data:/data
+    environment:
+      VIRTUAL_HOST: ${ORCHESTRATOR_DOMAINS}
+      LETSENCRYPT_HOST: ${ORCHESTRATOR_DOMAINS}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
 networks:
   default:
     external:

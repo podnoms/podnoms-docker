@@ -24,7 +24,7 @@ fi
 # 4. Download the latest version of nginx.tmpl
 curl https://raw.githubusercontent.com/jwilder/nginx-proxy/master/nginx.tmpl > templates/nginx.tmpl
 # cp templates/nginx.tmpl /opt/containers/nginx/templates/
-scp templates/nginx.tmpl podnoms.com:/opt/containers/nginx/templates/
+scp templates/nginx.tmpl podnoms.com:$NGINX_FILES_PATH/templates/
 
 # 5. Update local images
 docker-compose pull
@@ -33,17 +33,9 @@ docker-compose pull
 
 # Check if user set to use Special Conf Files
 if [ ! -z ${USE_NGINX_CONF_FILES+X} ] && [ "$USE_NGINX_CONF_FILES" = true ]; then
+    echo "Creating custom configuration files"
 
-    # Create the conf folder if it does not exists
-    mkdir -p $NGINX_FILES_PATH/conf.d
-
-    # Copy the special configurations to the nginx conf folder
-    cp -R ./conf.d/* $NGINX_FILES_PATH/conf.d
-
-    # Check if there was an error and try with sudo
-    if [ $? -ne 0 ]; then
-        sudo cp -R ./conf.d/* $NGINX_FILES_PATH/conf.d
-    fi
+    scp ./conf.d/* podnoms.com:$NGINX_FILES_PATH/conf.d/
 
     # If there was any errors inform the user
     if [ $? -ne 0 ]; then
